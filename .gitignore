@@ -1,0 +1,11 @@
+# --- BLOQUEAR EL LABORATORIO LOCAL ---
+# Ignoramos la carpeta entera donde clonaremos el juego
+damn-vulnerable-defi/
+
+# --- IGNORAR ARCHIVOS COMPILADOS Y AUXILIARES DE FOUNDRY ---
+# Si por alguna razón creas entornos foundry en la raíz, esto los bloquea
+out/
+cache/
+broadcast/
+.forge-snapshots/
+.env
