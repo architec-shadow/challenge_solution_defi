@@ -1,0 +1,30 @@
+ntes de gastar un solo dólar en comisiones de red (Gas), los auditores y atacantes usan Foundry para simular el ataque exactamente en el estado actual de la red real.
+
+Para estar 100% seguro de que tu contrato intermedio va a funcionar en producción, no usas datos ficticios. Corres el test usando un Fork de la red real con el siguiente comando en tu terminal:
+
+forge test --fork-url <RPC_DE_MAINNET_O_TESTNET> -vvvv
+
+¿Qué hace esto? Foundry descarga el estado real de la blockchain en tu computadora (los balances reales, los contratos ya desplegados, etc.) y ejecuta tu exploit sobre ese escenario real. Si el test pasa ahí, tienes la certeza matemática de que el exploit funcionará en la red real.
+
+¿Cómo se vería el flujo real usando Foundry?
+
+Modificas el contrato intermedio: En lugar de enviarle los fondos a una dirección fija de un test (recovery), haces que el contrato intermedio le envíe el dinero robado directamente a tu wallet real (tu EOA).
+
+forge create --rpc-url <RPC_REAL> --private-key <TU_LLAVE_PRIVADA> src/SideEntranceExploit.sol:SideEntranceExploit --constructor-args <DIRECCION_POOL_REAL> <TU_WALLET_REAL>
+
+
+
+Gatillas el ataque: Usando tu wallet, envías una transacción llamando a la función attack() de ese contrato que acabas de desplegar (puedes hacerlo con la herramienta cast de Foundry o desde un script). El contrato intermedio hace todo el trabajo en un milisegundo y deposita los fondos en tu wallet.
+
+
+3. El Truco Avanzado de los "Whitehats" y Red Teams: Despliegue Atómico (Scripts)
+
+En el Web3 real, los atacantes o rescatistas de fondos (Whitehats) no suelen hacer esto en dos transacciones separadas (Desplegar en una y Atacar en otra), porque un bot en la red podría detectar su contrato y robarles la idea antes de que llamen a attack().
+
+Usan un Script de Foundry (Solidity Scripts) que hace todo de golpe en una sola transacción:
+
+forge script script/Exploit.s.sol --rpc-url <RPC_REAL> --private-key <TU_LLAVE_PRIVADA> --broadcast
+
+
+# Archivo: .env
+PRIVATE_KEY=0x_AQUÍ_VA_LA_LLAVE_PRIVADA_DE_TU_WALLET_REAL
